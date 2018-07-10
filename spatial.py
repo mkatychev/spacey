@@ -130,3 +130,31 @@ def non_euclidean_area(poly, precision=6, lat_rad=False):
         total += 2 * atan2(tan(lon_dlt / 2) * (tan(lat1 / 2) + tan(lat2 / 2)),
                            1 + tan(lat1 / 2) * tan(lat2 / 2))
     return float(round(abs(total * R**2), precision))
+
+
+def angle(s, a, b):
+    '''
+    An application of the law of cosines, an algorithm to calculate area of
+    a closed polygon.
+    This expects a 2D vector point  with adjacent sibling points.
+
+    Args:
+        s: The 2D vector point used to derive theta.
+        a: The subsequent point used to calculate the A dot product.
+        b: The preceding point used to calculate the B dot product.
+    '''
+    Ax = s[0] - a[0]
+    Ay = s[1] - a[1]
+    Bx = s[0] - b[0]
+    By = s[1] - b[1]
+    # get length of vectors
+    lenA = sqrt(Ax**2 + Ay**2)
+    lenB = sqrt(Bx**2 + By**2)
+    # get dot product of the two vectors
+    sclrAB = Ax * Bx + Ay * By
+    # cos theta =  (Ax * Bx + Ay * By)/lenA * lenB
+    try:
+        return degrees(acos(round(sclrAB/(lenA * lenB), 6)))
+    except ZeroDivisionError as e:
+        e.args += ('points:[{},{},{}]'.format(s, a, b),)
+        raise e

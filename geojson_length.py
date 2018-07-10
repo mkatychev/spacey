@@ -34,28 +34,45 @@ def linestring_segment(linestring, lat_rad=False):
     return total_len
 
 
-def check_feature(feature):
+def check_feature(feature, lat_rad=False):
     geom_type = feature['geometry']['type']
     coords = feature['geometry']['coordinates']
+    props = feature['properties']
     if geom_type == 'MultiPolygon':
-        all_poly_perimeters = []
+        perimeters = []
         for polygon in coords:
             ring_perimeters = []
             for ring in polygon:
-                ring_perimeters.append(poly_perimeter(ring, poly_segment))
-            all_poly_perimeters.append(sum(ring_perimeters))
-        return sum(all_poly_perimeters)
+                ring_perimeters.append(poly_perimeter(ring, lat_rad))
+            perimeters.append(sum(ring_perimeters))
+        props['perimeters'] = perimeters
     elif geom_type == 'Polygon':
+        perimeter = float()
         for ring in coords:
-            segCheck(ring, poly_segment)
+            perimeter += poly_perimeter(ring, lat_rad)
+        props['perimeter'] = perimeter
+    elif geom_type == 'MultiLineString':
+        lengths = []
+        for line in coords:
+            length = float()
+            for segment in line:
+                length += linestring_segment(segment, lat_rad)
     elif geom_type == 'LineString':
-        (coords, linestring_segment)
+        length = float()
+        for segment in coords:
+            length += linestring_segment(segment, lat_rad)
 
 
 def check_file(filepath, identifier):
-    collection = json.load(open(filepath), 'r')
-    for feature in collection['features']:
-        check_feature(feature, identifier)
+    source = json.load(open(filepath), 'r')
+    sink = {'features':[], 'type':'FeatureCollection'}
+    try: # covers case if source['name'] is None
+        sink['name'] = source['name']
+    except KeyError:
+        pass
+    for key, feature in collection['features'].items():
+        sink[key] = check_feature(feature, identifier)
+    return sink
 
 
 
