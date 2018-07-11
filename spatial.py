@@ -155,6 +155,7 @@ def angle(s, a, b):
     # cos theta =  (Ax * Bx + Ay * By)/lenA * lenB
     try:
         return degrees(acos(round(sclrAB/(lenA * lenB), 6)))
+    # report on zero division error with verbosity
     except ZeroDivisionError as e:
         e.args += ('points:[{},{},{}]'.format(s, a, b),)
         raise e
