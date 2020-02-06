@@ -1,2 +1,8 @@
-# geojson_params
-A pure python library and command line interface for deriving area/lengths of geojsons and coordinate collections
+# spacey
+
+A simple pure python library for simple GIS functionality, enabling one to:
+
+* calculate geocentric radius for a given latitude
+* decimal degree or metre distance between two points
+* euclidean and noneuclidean area calculation
+* angle of a three pointed spline
